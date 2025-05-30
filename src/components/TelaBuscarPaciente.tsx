@@ -6,6 +6,8 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ArrowLeft, Users } from "lucide-react";
 import { toast } from "sonner";
+import { pacienteDAO } from '@/dao/PacienteDAO';
+import { Paciente } from '@/types/database';
 
 interface TelaBuscarPacienteProps {
   onVoltar: () => void;
@@ -13,20 +15,42 @@ interface TelaBuscarPacienteProps {
 
 const TelaBuscarPaciente = ({ onVoltar }: TelaBuscarPacienteProps) => {
   const [busca, setBusca] = useState('');
+  const [resultados, setResultados] = useState<Paciente[]>([]);
+  const [buscando, setBuscando] = useState(false);
 
-  const handleBuscar = () => {
+  const handleBuscar = async () => {
     if (!busca.trim()) {
       toast.error("Por favor, digite o nome do paciente!");
       return;
     }
     
-    // Aqui você implementaria a lógica de busca no backend
-    console.log("Buscando paciente:", busca);
-    toast.info(`Buscando paciente: ${busca}`);
+    setBuscando(true);
+
+    try {
+      const resultado = await pacienteDAO.buscarPorNome(busca.trim());
+      
+      if (resultado.success) {
+        setResultados(resultado.data || []);
+        if (resultado.data?.length === 0) {
+          toast.info("Nenhum paciente encontrado com esse nome");
+        } else {
+          toast.success(`${resultado.data?.length} paciente(s) encontrado(s)`);
+        }
+      } else {
+        toast.error(resultado.error || "Erro ao buscar pacientes");
+        setResultados([]);
+      }
+    } catch (error) {
+      console.error("Erro inesperado:", error);
+      toast.error("Erro inesperado na busca");
+      setResultados([]);
+    } finally {
+      setBuscando(false);
+    }
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
-    if (e.key === 'Enter') {
+    if (e.key === 'Enter' && !buscando) {
       handleBuscar();
     }
   };
@@ -38,6 +62,7 @@ const TelaBuscarPaciente = ({ onVoltar }: TelaBuscarPacienteProps) => {
           variant="outline" 
           onClick={onVoltar}
           className="flex items-center gap-2"
+          disabled={buscando}
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar
@@ -63,18 +88,40 @@ const TelaBuscarPaciente = ({ onVoltar }: TelaBuscarPacienteProps) => {
               onKeyPress={handleKeyPress}
               placeholder="Nome do paciente"
               className="h-11"
+              disabled={buscando}
             />
           </div>
           
           <Button 
             onClick={handleBuscar} 
             className="w-full h-11 bg-orange-600 hover:bg-orange-700 transition-colors flex items-center gap-2"
+            disabled={buscando}
           >
             <Users className="h-4 w-4" />
-            Buscar
+            {buscando ? "Buscando..." : "Buscar"}
           </Button>
         </CardContent>
       </Card>
+
+      {resultados.length > 0 && (
+        <Card className="max-w-2xl">
+          <CardHeader>
+            <CardTitle>Resultados da Busca</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="space-y-3">
+              {resultados.map((paciente) => (
+                <div key={paciente.id} className="p-4 border rounded-lg bg-gray-50">
+                  <h3 className="font-semibold text-lg">{paciente.nome}</h3>
+                  <p className="text-gray-600">Data de Nascimento: {new Date(paciente.dataNascimento).toLocaleDateString('pt-BR')}</p>
+                  <p className="text-gray-600">CPF: {paciente.cpf}</p>
+                  <p className="text-xs text-gray-400">ID: {paciente.id}</p>
+                </div>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
+      )}
     </div>
   );
 };

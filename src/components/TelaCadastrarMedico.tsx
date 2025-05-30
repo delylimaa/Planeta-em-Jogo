@@ -4,8 +4,9 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, UserCheck } from "lucide-react";
+import { ArrowLeft, User } from "lucide-react";
 import { toast } from "sonner";
+import { medicoDAO } from '@/dao/MedicoDAO';
 
 interface TelaCadastrarMedicoProps {
   onVoltar: () => void;
@@ -15,21 +16,46 @@ const TelaCadastrarMedico = ({ onVoltar }: TelaCadastrarMedicoProps) => {
   const [nome, setNome] = useState('');
   const [especialidade, setEspecialidade] = useState('');
   const [crm, setCrm] = useState('');
+  const [salvando, setSalvando] = useState(false);
 
-  const handleSalvar = () => {
-    if (!nome || !especialidade || !crm) {
-      toast.error("Por favor, preencha todos os campos!");
+  const handleSalvar = async () => {
+    if (!nome.trim() || !especialidade.trim() || !crm.trim()) {
+      toast.error("Todos os campos são obrigatórios!");
       return;
     }
-    
-    // Aqui você implementaria a lógica para salvar no backend
-    console.log("Médico cadastrado:", { nome, especialidade, crm });
-    toast.success("Médico cadastrado com sucesso!");
-    
-    // Limpar formulário
-    setNome('');
-    setEspecialidade('');
-    setCrm('');
+
+    setSalvando(true);
+
+    try {
+      const resultado = await medicoDAO.criar({
+        nome: nome.trim(),
+        especialidade: especialidade.trim(),
+        crm: crm.trim()
+      });
+
+      if (resultado.success) {
+        toast.success("Médico cadastrado com sucesso!");
+        console.log("Médico cadastrado:", resultado.data);
+        
+        // Limpa os campos
+        setNome('');
+        setEspecialidade('');
+        setCrm('');
+      } else {
+        toast.error(resultado.error || "Erro ao cadastrar médico");
+      }
+    } catch (error) {
+      console.error("Erro inesperado:", error);
+      toast.error("Erro inesperado ao cadastrar médico");
+    } finally {
+      setSalvando(false);
+    }
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !salvando) {
+      handleSalvar();
+    }
   };
 
   return (
@@ -39,19 +65,20 @@ const TelaCadastrarMedico = ({ onVoltar }: TelaCadastrarMedicoProps) => {
           variant="outline" 
           onClick={onVoltar}
           className="flex items-center gap-2"
+          disabled={salvando}
         >
           <ArrowLeft className="h-4 w-4" />
           Voltar
         </Button>
         <div className="flex items-center gap-2">
-          <UserCheck className="h-6 w-6 text-green-600" />
+          <User className="h-6 w-6 text-blue-600" />
           <h2 className="text-2xl font-bold text-gray-800">Cadastrar Médico</h2>
         </div>
       </div>
 
       <Card className="max-w-md">
         <CardHeader>
-          <CardTitle>Dados do Médico</CardTitle>
+          <CardTitle>Informações do Médico</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2">
@@ -61,11 +88,13 @@ const TelaCadastrarMedico = ({ onVoltar }: TelaCadastrarMedicoProps) => {
               type="text"
               value={nome}
               onChange={(e) => setNome(e.target.value)}
-              placeholder="Digite o nome completo"
+              onKeyPress={handleKeyPress}
+              placeholder="Nome completo do médico"
               className="h-11"
+              disabled={salvando}
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="especialidade">Especialidade</Label>
             <Input
@@ -73,11 +102,13 @@ const TelaCadastrarMedico = ({ onVoltar }: TelaCadastrarMedicoProps) => {
               type="text"
               value={especialidade}
               onChange={(e) => setEspecialidade(e.target.value)}
-              placeholder="Digite a especialidade"
+              onKeyPress={handleKeyPress}
+              placeholder="Especialidade médica"
               className="h-11"
+              disabled={salvando}
             />
           </div>
-          
+
           <div className="space-y-2">
             <Label htmlFor="crm">CRM</Label>
             <Input
@@ -85,16 +116,19 @@ const TelaCadastrarMedico = ({ onVoltar }: TelaCadastrarMedicoProps) => {
               type="text"
               value={crm}
               onChange={(e) => setCrm(e.target.value)}
-              placeholder="Digite o número do CRM"
+              onKeyPress={handleKeyPress}
+              placeholder="Número do CRM"
               className="h-11"
+              disabled={salvando}
             />
           </div>
           
           <Button 
             onClick={handleSalvar} 
-            className="w-full h-11 bg-green-600 hover:bg-green-700 transition-colors"
+            className="w-full h-11 bg-blue-600 hover:bg-blue-700 transition-colors"
+            disabled={salvando}
           >
-            Salvar
+            {salvando ? "Salvando..." : "Salvar"}
           </Button>
         </CardContent>
       </Card>
