@@ -14,7 +14,7 @@ export class VozService {
     if (this.vozes.length === 0) {
       // Aguardar carregamento das vozes
       this.synth.onvoiceschanged = () => {
-        this.vozes = this.synth.getVozes();
+        this.vozes = this.synth.getVoices();
       };
     }
   }

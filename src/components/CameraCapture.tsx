@@ -1,6 +1,6 @@
 
 import React, { useRef, useCallback, useState } from 'react';
-import { Camera, CameraOff, Capture } from 'lucide-react';
+import { Camera, CameraOff, Circle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 
@@ -109,7 +109,7 @@ export const CameraCapture: React.FC<CameraCaptureProps> = ({ onCapture, isProce
                   disabled={isProcessing}
                   className="flex items-center gap-2"
                 >
-                  <Capture className="w-4 h-4" />
+                  <Circle className="w-4 h-4" />
                   {isProcessing ? 'Processando...' : 'Capturar'}
                 </Button>
                 <Button
