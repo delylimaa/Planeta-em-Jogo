@@ -1,9 +1,9 @@
 
 import React from 'react';
-import { MedGuardian } from '@/components/MedGuardian';
+import { EcoClicker } from '@/components/EcoClicker';
 
 const Index = () => {
-  return <MedGuardian />;
+  return <EcoClicker />;
 };
 
 export default Index;
