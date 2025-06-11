@@ -117,8 +117,11 @@ export const EcoClicker: React.FC = () => {
   return (
     <div className="container mx-auto p-6 max-w-6xl">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold mb-2">🌍 EcoClicker</h1>
+        <h1 className="text-4xl font-bold mb-2">🌍 Planeta em Jogo</h1>
         <p className="text-lg text-muted-foreground">
+          Um Clicker Educativo sobre Sustentabilidade
+        </p>
+        <p className="text-sm text-muted-foreground mt-2">
           Construa um mundo sustentável e aprenda sobre meio ambiente!
         </p>
       </div>
