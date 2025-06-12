@@ -19,7 +19,10 @@ export const ConstrucoesLoja: React.FC<ConstrucoesLojaProps> = ({
     return (
       (!construcao.custo.madeira || recursos.madeira >= construcao.custo.madeira) &&
       (!construcao.custo.energia || recursos.energia >= construcao.custo.energia) &&
-      (!construcao.custo.dinheiro || recursos.dinheiro >= construcao.custo.dinheiro)
+      (!construcao.custo.dinheiro || recursos.dinheiro >= construcao.custo.dinheiro) &&
+      (!construcao.custo.agua || recursos.agua >= construcao.custo.agua) &&
+      (!construcao.custo.ferro || recursos.ferro >= construcao.custo.ferro) &&
+      (!construcao.custo.carbono || recursos.carbono >= construcao.custo.carbono)
     );
   };
 
@@ -27,12 +30,25 @@ export const ConstrucoesLoja: React.FC<ConstrucoesLojaProps> = ({
     switch (tipo) {
       case 'sustentavel': return 'border-green-500 bg-green-50';
       case 'poluente': return 'border-red-500 bg-red-50';
+      case 'neutro': return 'border-yellow-500 bg-yellow-50';
       default: return 'border-gray-500 bg-gray-50';
     }
   };
 
   const getQuantidadeConstruida = (construcaoId: string) => {
     return gameState.construcoes[construcaoId as keyof typeof gameState.construcoes] || 0;
+  };
+
+  const getRecursoEmoji = (recurso: string) => {
+    switch (recurso) {
+      case 'madeira': return '🌳';
+      case 'energia': return '⚡';
+      case 'dinheiro': return '💰';
+      case 'agua': return '💧';
+      case 'ferro': return '⛏️';
+      case 'carbono': return '🌿';
+      default: return '📦';
+    }
   };
 
   return (
@@ -55,16 +71,16 @@ export const ConstrucoesLoja: React.FC<ConstrucoesLojaProps> = ({
                 
                 <div className="text-xs space-y-1 mb-3">
                   <div><strong>Custo:</strong></div>
-                  {construcao.custo.madeira && <div>🌳 {construcao.custo.madeira} madeira</div>}
-                  {construcao.custo.energia && <div>⚡ {construcao.custo.energia} energia</div>}
-                  {construcao.custo.dinheiro && <div>💰 {construcao.custo.dinheiro} dinheiro</div>}
+                  {Object.entries(construcao.custo).map(([recurso, valor]) => (
+                    valor && <div key={recurso}>{getRecursoEmoji(recurso)} {valor} {recurso}</div>
+                  ))}
                 </div>
 
                 <div className="text-xs space-y-1 mb-3">
                   <div><strong>Produção:</strong></div>
-                  {construcao.producao.madeira && <div>🌳 +{construcao.producao.madeira}/3s madeira</div>}
-                  {construcao.producao.energia && <div>⚡ +{construcao.producao.energia}/3s energia</div>}
-                  {construcao.producao.dinheiro && <div>💰 +{construcao.producao.dinheiro}/3s dinheiro</div>}
+                  {Object.entries(construcao.producao).map(([recurso, valor]) => (
+                    valor && <div key={recurso}>{getRecursoEmoji(recurso)} +{valor}/3s {recurso}</div>
+                  ))}
                 </div>
 
                 <Button

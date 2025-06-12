@@ -6,19 +6,29 @@ const estadoInicial: GameState = {
   recursos: {
     madeira: 10,
     energia: 5,
-    dinheiro: 20
+    dinheiro: 20,
+    agua: 15,
+    ferro: 5,
+    carbono: 0
   },
   construcoes: {
     usinasCarvao: 0,
     usinasRenováveis: 0,
     fabricas: 0,
     reflorestamento: 0,
-    cidadesVerdes: 0
+    cidadesVerdes: 0,
+    usinasEolicas: 0,
+    usinasHidreletricas: 0,
+    centrosReciclagem: 0,
+    laboratorios: 0,
+    parquesNacionais: 0
   },
   impactoAmbiental: {
     poluicao: 0,
     desmatamento: 0,
-    aquecimentoGlobal: 0
+    aquecimentoGlobal: 0,
+    poluicaoAgua: 0,
+    extincaoEspecies: 0
   },
   pontuacao: 0,
   nivel: 1,
@@ -73,13 +83,13 @@ export const useGameState = () => {
   }, []);
 
   const calcularNivelPlaneta = useCallback(() => {
-    const { poluicao, desmatamento, aquecimentoGlobal } = gameState.impactoAmbiental;
-    const impactoTotal = poluicao + desmatamento + aquecimentoGlobal;
+    const { poluicao, desmatamento, aquecimentoGlobal, poluicaoAgua, extincaoEspecies } = gameState.impactoAmbiental;
+    const impactoTotal = poluicao + desmatamento + aquecimentoGlobal + poluicaoAgua + extincaoEspecies;
     
-    if (impactoTotal < 50) return 'saudavel'; // Verde
-    if (impactoTotal < 150) return 'alerta'; // Amarelo
-    if (impactoTotal < 300) return 'critico'; // Laranja
-    return 'catastrofico'; // Vermelho
+    if (impactoTotal < 50) return 'saudavel';
+    if (impactoTotal < 150) return 'alerta';
+    if (impactoTotal < 300) return 'critico';
+    return 'catastrofico';
   }, [gameState.impactoAmbiental]);
 
   return {

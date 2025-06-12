@@ -25,12 +25,19 @@ export const EcoClicker: React.FC = () => {
 
   const [perguntaAtual, setPerguntaAtual] = useState<number | null>(null);
   const [totalCliques, setTotalCliques] = useState(0);
-  const [autoProducao, setAutoProducao] = useState(false);
 
   const nivelPlaneta = calcularNivelPlaneta();
 
-  const coletar = (tipo: 'madeira' | 'energia' | 'dinheiro') => {
-    const quantidades = { madeira: 5, energia: 3, dinheiro: 2 };
+  const coletar = (tipo: 'madeira' | 'energia' | 'dinheiro' | 'agua' | 'ferro' | 'carbono') => {
+    const quantidades = { 
+      madeira: 5, 
+      energia: 3, 
+      dinheiro: 2, 
+      agua: 4, 
+      ferro: 2, 
+      carbono: 3 
+    };
+    
     adicionarRecursos(tipo, quantidades[tipo]);
     setTotalCliques(prev => prev + 1);
 
@@ -49,29 +56,27 @@ export const EcoClicker: React.FC = () => {
     const { custo } = construcaoSelecionada;
 
     // Verificar se tem recursos suficientes
-    if (
-      (custo.madeira && recursos.madeira < custo.madeira) ||
-      (custo.energia && recursos.energia < custo.energia) ||
-      (custo.dinheiro && recursos.dinheiro < custo.dinheiro)
-    ) {
-      return;
+    const recursosNecessarios = ['madeira', 'energia', 'dinheiro', 'agua', 'ferro', 'carbono'] as const;
+    for (const recurso of recursosNecessarios) {
+      if (custo[recurso] && recursos[recurso] < custo[recurso]) {
+        return;
+      }
     }
 
     // Subtrair custos
-    if (custo.madeira) adicionarRecursos('madeira', -custo.madeira);
-    if (custo.energia) adicionarRecursos('energia', -custo.energia);
-    if (custo.dinheiro) adicionarRecursos('dinheiro', -custo.dinheiro);
+    recursosNecessarios.forEach(recurso => {
+      if (custo[recurso]) {
+        adicionarRecursos(recurso, -custo[recurso]);
+      }
+    });
 
     // Adicionar impactos
-    if (construcaoSelecionada.impacto.poluicao) {
-      adicionarImpacto('poluicao', construcaoSelecionada.impacto.poluicao);
-    }
-    if (construcaoSelecionada.impacto.desmatamento) {
-      adicionarImpacto('desmatamento', construcaoSelecionada.impacto.desmatamento);
-    }
-    if (construcaoSelecionada.impacto.aquecimentoGlobal) {
-      adicionarImpacto('aquecimentoGlobal', construcaoSelecionada.impacto.aquecimentoGlobal);
-    }
+    const impactos = ['poluicao', 'desmatamento', 'aquecimentoGlobal', 'poluicaoAgua', 'extincaoEspecies'] as const;
+    impactos.forEach(impacto => {
+      if (construcaoSelecionada.impacto[impacto]) {
+        adicionarImpacto(impacto, construcaoSelecionada.impacto[impacto]);
+      }
+    });
 
     construir(construcaoId);
   };
@@ -98,15 +103,12 @@ export const EcoClicker: React.FC = () => {
         if (quantidade > 0) {
           const { producao } = construcaoConfig;
           
-          if (producao.madeira) {
-            adicionarRecursos('madeira', producao.madeira * quantidade);
-          }
-          if (producao.energia) {
-            adicionarRecursos('energia', producao.energia * quantidade);
-          }
-          if (producao.dinheiro) {
-            adicionarRecursos('dinheiro', producao.dinheiro * quantidade);
-          }
+          const recursosProducao = ['madeira', 'energia', 'dinheiro', 'agua', 'ferro', 'carbono'] as const;
+          recursosProducao.forEach(recurso => {
+            if (producao[recurso]) {
+              adicionarRecursos(recurso, producao[recurso] * quantidade);
+            }
+          });
         }
       });
     }, 3000); // Produção automática a cada 3 segundos

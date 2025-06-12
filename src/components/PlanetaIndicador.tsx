@@ -51,7 +51,7 @@ export const PlanetaIndicador: React.FC<PlanetaIndicadorProps> = ({
         </CardTitle>
       </CardHeader>
       <CardContent>
-        <div className="grid grid-cols-3 gap-4 text-center">
+        <div className="grid grid-cols-2 md:grid-cols-5 gap-4 text-center">
           <div>
             <p className="text-sm text-muted-foreground">Poluição</p>
             <p className="text-lg font-bold text-red-600">{impactoAmbiental.poluicao}</p>
@@ -63,6 +63,14 @@ export const PlanetaIndicador: React.FC<PlanetaIndicadorProps> = ({
           <div>
             <p className="text-sm text-muted-foreground">Aquec. Global</p>
             <p className="text-lg font-bold text-red-600">{impactoAmbiental.aquecimentoGlobal}</p>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Poluição Água</p>
+            <p className="text-lg font-bold text-blue-600">{impactoAmbiental.poluicaoAgua}</p>
+          </div>
+          <div>
+            <p className="text-sm text-muted-foreground">Extinção</p>
+            <p className="text-lg font-bold text-purple-600">{impactoAmbiental.extincaoEspecies}</p>
           </div>
         </div>
       </CardContent>
