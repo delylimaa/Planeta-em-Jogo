@@ -3,7 +3,7 @@ import { Construcao } from '@/types/game';
 
 export const construcoes: Construcao[] = [
   {
-    id: 'usina-carvao',
+    id: 'usinasCarvao',
     nome: 'Usina de Carvão',
     custo: { madeira: 50, dinheiro: 100 },
     producao: { energia: 10, dinheiro: 5 },
@@ -12,7 +12,7 @@ export const construcoes: Construcao[] = [
     tipo: 'poluente'
   },
   {
-    id: 'usina-solar',
+    id: 'usinasRenováveis',
     nome: 'Usina Solar',
     custo: { madeira: 30, dinheiro: 200 },
     producao: { energia: 8 },
@@ -21,7 +21,7 @@ export const construcoes: Construcao[] = [
     tipo: 'sustentavel'
   },
   {
-    id: 'fabrica',
+    id: 'fabricas',
     nome: 'Fábrica',
     custo: { energia: 20, dinheiro: 150 },
     producao: { dinheiro: 15 },
@@ -39,21 +39,12 @@ export const construcoes: Construcao[] = [
     tipo: 'sustentavel'
   },
   {
-    id: 'cidade-verde',
+    id: 'cidadesVerdes',
     nome: 'Cidade Verde',
     custo: { madeira: 40, energia: 30, dinheiro: 300 },
     producao: { dinheiro: 20 },
     impacto: { poluicao: -3, aquecimentoGlobal: -2 },
     descricao: 'Moradia sustentável que beneficia o meio ambiente',
-    tipo: 'sustentavel'
-  },
-  {
-    id: 'usina-eolica',
-    nome: 'Usina Eólica',
-    custo: { madeira: 25, dinheiro: 180 },
-    producao: { energia: 7 },
-    impacto: { poluicao: -1 },
-    descricao: 'Energia limpa através do vento',
     tipo: 'sustentavel'
   }
 ];

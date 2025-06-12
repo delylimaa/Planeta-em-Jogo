@@ -31,6 +31,10 @@ export const ConstrucoesLoja: React.FC<ConstrucoesLojaProps> = ({
     }
   };
 
+  const getQuantidadeConstruida = (construcaoId: string) => {
+    return gameState.construcoes[construcaoId as keyof typeof gameState.construcoes] || 0;
+  };
+
   return (
     <Card className="mb-6">
       <CardHeader>
@@ -41,7 +45,12 @@ export const ConstrucoesLoja: React.FC<ConstrucoesLojaProps> = ({
           {construcoes.map((construcao) => (
             <Card key={construcao.id} className={`${getTipoColor(construcao.tipo)}`}>
               <CardContent className="p-4">
-                <h4 className="font-bold mb-2">{construcao.nome}</h4>
+                <div className="flex justify-between items-center mb-2">
+                  <h4 className="font-bold">{construcao.nome}</h4>
+                  <span className="text-sm bg-blue-100 px-2 py-1 rounded">
+                    {getQuantidadeConstruida(construcao.id)}
+                  </span>
+                </div>
                 <p className="text-sm text-muted-foreground mb-3">{construcao.descricao}</p>
                 
                 <div className="text-xs space-y-1 mb-3">
@@ -49,6 +58,13 @@ export const ConstrucoesLoja: React.FC<ConstrucoesLojaProps> = ({
                   {construcao.custo.madeira && <div>🌳 {construcao.custo.madeira} madeira</div>}
                   {construcao.custo.energia && <div>⚡ {construcao.custo.energia} energia</div>}
                   {construcao.custo.dinheiro && <div>💰 {construcao.custo.dinheiro} dinheiro</div>}
+                </div>
+
+                <div className="text-xs space-y-1 mb-3">
+                  <div><strong>Produção:</strong></div>
+                  {construcao.producao.madeira && <div>🌳 +{construcao.producao.madeira}/3s madeira</div>}
+                  {construcao.producao.energia && <div>⚡ +{construcao.producao.energia}/3s energia</div>}
+                  {construcao.producao.dinheiro && <div>💰 +{construcao.producao.dinheiro}/3s dinheiro</div>}
                 </div>
 
                 <Button
